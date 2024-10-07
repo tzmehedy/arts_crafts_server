@@ -44,6 +44,11 @@ async function run() {
       res.send("The craft items will coming");
     });
 
+    app.get("/allArtsCrafts", async(req, res)=>{
+        const result = await addCraftsCollection.find().toArray()
+        res.send(result)
+    })
+
     app.post("/addCraft", async(req, res) => {
       const newCraft = req.body;
       const result = await addCraftsCollection.insertOne(newCraft)
