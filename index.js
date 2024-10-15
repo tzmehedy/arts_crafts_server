@@ -78,6 +78,37 @@ async function run() {
       res.send(result)
     })
 
+    app.put("/update/:id", async(req,res)=>{
+      const id = req.params.id
+      const updatedCraftInfo = req.body
+
+      const query = {_id : new ObjectId(id)}
+
+      const options = { upsert: true }
+
+      const updatedCraft = {
+        $set:{
+          name: updatedCraftInfo.name,
+          subCategory:updatedCraftInfo.subCategory,
+          description:updatedCraftInfo.description,
+          price:updatedCraftInfo.price,
+          rating: updatedCraftInfo.rating,
+          customization: updatedCraftInfo.customization,
+          processingTime: updatedCraftInfo.processingTime,
+          stockStatus: updatedCraftInfo.stockStatus,
+          photoUrl:updatedCraftInfo.photoUrl
+        }
+      }
+
+      const result = await addCraftsCollection.updateOne(
+        query,
+        updatedCraft,
+        options
+      )
+
+      res.send(result)
+    })
+
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
