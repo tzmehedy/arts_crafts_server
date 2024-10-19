@@ -10,6 +10,33 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+const subCategory = [
+  {
+    subcategory_name: "Mountain Landscape",
+    image: "mountain_landscape_painting.jpg",
+  },
+  {
+    subcategory_name: "Realistic Portrait",
+    image: "realistic_portrait_drawing.jpg",
+  },
+  {
+    subcategory_name: "Floral Watercolour",
+    image: "floral_watercolour_painting.jpg",
+  },
+  {
+    subcategory_name: "Classical Oil Painting",
+    image: "classical_oil_painting.jpg",
+  },
+  {
+    subcategory_name: "Figure Charcoal Sketch",
+    image: "figure_charcoal_sketching.jpg",
+  },
+  {
+    subcategory_name: "Humor Cartoon Drawing",
+    image: "humor_cartoon_drawing.jpg",
+  },
+];
+
 
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.k8aq9.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
@@ -39,6 +66,10 @@ async function run() {
     // Connect to the "insertDB" database and access its "haiku" collection
 
     const addCraftsCollection = client.db("artsAndCraftsDB").collection("artsAndCrafts")
+
+    const subCategoryCollection = client
+      .db("artsAndCraftsDB")
+      .collection("subCategory");
 
     app.get("/", (req, res) => {
       res.send("The craft items will coming");
@@ -105,9 +136,32 @@ async function run() {
         updatedCraft,
         options
       )
-
       res.send(result)
     })
+
+
+    app.get("/subCategory", async(req,res)=>{
+      const result = await subCategoryCollection.find().toArray()
+      res.send(result)
+    })
+
+    app.get("/:subCategoryName", async(req,res)=>{
+      const subCategoryName = req.params.subCategoryName
+      const query = { name: subCategoryName }
+      const result = await addCraftsCollection.find(query).toArray()
+      res.send(result)
+    });
+
+    app.get("/details/:id", async(req, res)=>{
+      const id = req.params.id
+      const query = {_id: new ObjectId(id)}
+      const result = await addCraftsCollection.findOne(query)
+      res.send(result)
+    })
+
+   
+
+    
 
   } finally {
     // Ensures that the client will close when you finish/error
